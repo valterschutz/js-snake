@@ -38,7 +38,7 @@ for (let i = 0; i < nrOfBoxes * nrOfBoxes; i++) {
     boxes.push(box)
 }
 
-// Listen for keypresses, only allow valid directions
+// Listen for keypresses, only allow valid directions.
 document.addEventListener("keydown", function (e) {
     switch (e.key) {
         case "ArrowRight":
@@ -61,6 +61,12 @@ document.addEventListener("keydown", function (e) {
                 direction = 10
             }
             break
+    }
+})
+// Press p to pause game. Listen for keyup when pausing game
+document.addEventListener("keyup", function (e) {
+    if (e.key == "p") {
+        isPaused = !isPaused
     }
 })
 
