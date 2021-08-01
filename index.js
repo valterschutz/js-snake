@@ -2,15 +2,24 @@
 const boxSize = 50
 const nrOfBoxes = 10  // For one direction only, so grid contains nrOfBoxes^2 boxes
 
+
+// Variables
 // The snake, represented as an array
-let snake = [11, 12, 13]
+let snake
+// Position of current apple
+let apple
 // Array containing boxes, used for easier referencing
 let boxes = []
 // Direction. 1 = right, -1 = left, 10 = down, -10 = up
-let direction = 1
+let direction
+// Score
+let score
+let timerId
 
 // Elements
 const grid = document.getElementById("grid")
+const scoreEl = document.getElementById("score")
+const startBtn = document.getElementById("start-btn")
 
 // Set size of grid and populate with boxes
 grid.style.width = `${nrOfBoxes * boxSize}px`
@@ -42,13 +51,41 @@ document.addEventListener("keydown", function (e) {
     }
 })
 
-// First draw snake, then start the game loop
-drawSnake()
-setInterval(gameLoop, 100);
+startBtn.addEventListener("click", function () {
+    initialize()
+    clearInterval(timerId)
+    timerId = setInterval(gameLoop, 100);
+})
+
+// First initialize the game, then start the game loop
+// initialize()
+
 
 
 
 // Functions
+
+// Called when game is started/restarted
+function initialize() {
+    clearBoard()
+
+    snake = [11, 12, 13]
+    direction = 1
+    score = 0
+    scoreEl.textContent = score
+    apple = 56
+    newApple()
+    drawSnake()
+    drawApple()
+}
+
+function clearBoard() {
+    boxes.forEach(function (box) {
+        box.classList.remove("apple")
+        box.classList.remove("snake")
+    })
+}
+
 function drawSnake() {
     snake.forEach(index => { boxes[index].classList.add("snake") })
 }
@@ -57,26 +94,66 @@ function undrawSnake() {
     snake.forEach(index => { boxes[index].classList.remove("snake") })
 }
 
-// Returns true if movement happened
+// Return false if player lost
 function moveSnake() {
     // Check if movement is allowed
-
     const head = snake[snake.length - 1]
-    console.log(head)
+    const newHead = snake[snake.length - 1] + direction
     if (head % 10 === 0 && direction === -1 ||  // Left
         head % 10 === 9 && direction === 1 ||  // Right
         head - 10 < 0 && direction === -10 ||  // Up
-        head + 10 >= 100 && direction === 10  // Down
+        head + 10 >= 100 && direction === 10 ||  // Down
+        boxes[newHead].classList.contains("snake")  // Snake bit its tail
     ) {
         return false
+    } else {
+        undrawSnake()
+        snake.push(snake[snake.length - 1] + direction)
+        if (boxes[newHead].classList.contains("apple")) {
+            incrementScore()
+            newApple()
+            // snake.shift()
+
+        } else {
+            snake.shift()
+        }
+        drawSnake()
+        return true
     }
-    undrawSnake()
-    snake.push(snake[snake.length - 1] + direction)
-    snake.shift()
-    drawSnake()
-    return true
+
+}
+
+function drawApple() {
+    boxes[apple].classList.add("apple")
+}
+
+function undrawApple() {
+    boxes[apple].classList.remove("apple")
+}
+
+function newApple() {
+    undrawApple()
+    apple = Math.floor(Math.random() * nrOfBoxes * nrOfBoxes)
+    drawApple()
+}
+
+function checkForApple() {
+    const head = snake[snake.length - 1]
+    if ("apple" in boxes[head].classList) {
+
+    }
+}
+
+function incrementScore() {
+    score++
+    scoreEl.textContent = score
+
 }
 
 function gameLoop() {
-    moveSnake()
+    if (!moveSnake()) {
+        console.log("You lost!")
+        clearBoard()
+    }
+    // checkForApple()
 }
