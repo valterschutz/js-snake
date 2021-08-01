@@ -37,16 +37,24 @@ for (let i = 0; i < nrOfBoxes * nrOfBoxes; i++) {
 document.addEventListener("keydown", function (e) {
     switch (e.key) {
         case "ArrowRight":
-            direction = 1
+            if (direction !== -1) {
+                direction = 1
+            }
             break
         case "ArrowLeft":
-            direction = -1
+            if (direction !== 1) {
+                direction = -1
+            }
             break
         case "ArrowUp":
-            direction = -10
+            if (direction !== 10) {
+                direction = -10
+            }
             break
         case "ArrowDown":
-            direction = 10
+            if (direction !== -10) {
+                direction = 10
+            }
             break
     }
 })
