@@ -160,7 +160,7 @@ function incrementScore() {
 
 function gameLoop() {
     if (!moveSnake()) {
-        message.textContent = "You lost!"
+        message.textContent = `You lost! Score was ${score}`
         clearBoard()
         clearInterval(timerId)
     }
