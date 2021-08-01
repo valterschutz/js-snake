@@ -15,6 +15,7 @@ let direction
 // Score
 let score
 let timerId
+let speed
 
 // Elements
 const grid = document.getElementById("grid")
@@ -81,7 +82,6 @@ function initialize() {
     direction = 1
     score = 0
     message.textContent = `Score: 0`
-    apple = 56
     newApple()
     drawSnake()
     drawApple()
@@ -132,16 +132,27 @@ function moveSnake() {
 }
 
 function drawApple() {
-    boxes[apple].classList.add("apple")
+    if (apple) {
+        boxes[apple].classList.add("apple")
+    }
+
 }
 
 function undrawApple() {
-    boxes[apple].classList.remove("apple")
+    if (apple) {
+        boxes[apple].classList.remove("apple")
+    }
 }
 
 function newApple() {
     undrawApple()
-    apple = Math.floor(Math.random() * nrOfBoxes * nrOfBoxes)
+    let newApple
+    // New apple position must not be the same and should not touch the snake
+    do {
+        newApple = Math.floor(Math.random() * nrOfBoxes * nrOfBoxes)
+    } while (boxes[newApple].classList.contains("snake") || newApple === apple)
+
+    apple = newApple
     drawApple()
 }
 
