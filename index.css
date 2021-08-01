@@ -17,3 +17,7 @@ body {
 .box {
     outline: 1px solid black;
 }
+
+.snake {
+    background-color: greenyellow;
+}
