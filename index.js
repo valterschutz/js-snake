@@ -18,7 +18,7 @@ let timerId
 
 // Elements
 const grid = document.getElementById("grid")
-const scoreEl = document.getElementById("score")
+const message = document.getElementById("message")
 const startBtn = document.getElementById("start-btn")
 
 // Set size of grid and populate with boxes
@@ -80,7 +80,7 @@ function initialize() {
     snake = [11, 12, 13]
     direction = 1
     score = 0
-    scoreEl.textContent = score
+    message.textContent = `Score: 0`
     apple = 56
     newApple()
     drawSnake()
@@ -154,14 +154,15 @@ function checkForApple() {
 
 function incrementScore() {
     score++
-    scoreEl.textContent = score
+    message.textContent = `Score: ${score}`
 
 }
 
 function gameLoop() {
     if (!moveSnake()) {
-        console.log("You lost!")
+        message.textContent = "You lost!"
         clearBoard()
+        clearInterval(timerId)
     }
     // checkForApple()
 }

@@ -7,6 +7,12 @@ body {
     padding: 50px;
 }
 
+.container {
+    width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
 #grid {
     margin: 0 auto;
     display: flex;
@@ -24,4 +30,8 @@ body {
 
 .apple {
     background-color: crimson;
+}
+
+button {
+    margin-bottom: 20px;
 }
