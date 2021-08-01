@@ -24,7 +24,27 @@ for (let i = 0; i < nrOfBoxes * nrOfBoxes; i++) {
     boxes.push(box)
 }
 
+// Listen for keypresses
+document.addEventListener("keydown", function (e) {
+    switch (e.key) {
+        case "ArrowRight":
+            direction = 1
+            break
+        case "ArrowLeft":
+            direction = -1
+            break
+        case "ArrowUp":
+            direction = -10
+            break
+        case "ArrowDown":
+            direction = 10
+            break
+    }
+})
+
+// First draw snake, then start the game loop
 drawSnake()
+setInterval(gameLoop, 100);
 
 
 
@@ -37,9 +57,26 @@ function undrawSnake() {
     snake.forEach(index => { boxes[index].classList.remove("snake") })
 }
 
+// Returns true if movement happened
 function moveSnake() {
+    // Check if movement is allowed
+
+    const head = snake[snake.length - 1]
+    console.log(head)
+    if (head % 10 === 0 && direction === -1 ||  // Left
+        head % 10 === 9 && direction === 1 ||  // Right
+        head - 10 < 0 && direction === -10 ||  // Up
+        head + 10 >= 100 && direction === 10  // Down
+    ) {
+        return false
+    }
     undrawSnake()
     snake.push(snake[snake.length - 1] + direction)
     snake.shift()
     drawSnake()
+    return true
+}
+
+function gameLoop() {
+    moveSnake()
 }
