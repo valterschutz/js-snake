@@ -1,11 +1,19 @@
+html {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     padding: 50px;
 }
 
-.container {
-    width: 600px;
-    height: 600px;
+#grid {
     margin: 0 auto;
-    background-color: blueviolet;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: silver;
+}
+
+.box {
+    outline: 1px solid black;
 }
