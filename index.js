@@ -1,6 +1,8 @@
 // Constants, sizes in pixels
 const boxSize = 50
 const nrOfBoxes = 10  // For one direction only, so grid contains nrOfBoxes^2 boxes
+const startSpeed = 100
+const speedCoef = 1
 
 
 // Variables
@@ -34,7 +36,7 @@ for (let i = 0; i < nrOfBoxes * nrOfBoxes; i++) {
     boxes.push(box)
 }
 
-// Listen for keypresses
+// Listen for keypresses, only allow valid directions
 document.addEventListener("keydown", function (e) {
     switch (e.key) {
         case "ArrowRight":
@@ -60,17 +62,12 @@ document.addEventListener("keydown", function (e) {
     }
 })
 
+// Start game if button pressed
 startBtn.addEventListener("click", function () {
     initialize()
     clearInterval(timerId)
-    timerId = setInterval(gameLoop, 100);
+    timerId = setInterval(gameLoop, speed);
 })
-
-// First initialize the game, then start the game loop
-// initialize()
-
-
-
 
 // Functions
 
@@ -81,12 +78,14 @@ function initialize() {
     snake = [11, 12, 13]
     direction = 1
     score = 0
+    // Speed in ms, smaller value means faster
+    speed = startSpeed
     message.textContent = `Score: 0`
     newApple()
     drawSnake()
-    drawApple()
 }
 
+// Remove snake and apples from board
 function clearBoard() {
     boxes.forEach(function (box) {
         box.classList.remove("apple")
@@ -104,7 +103,7 @@ function undrawSnake() {
 
 // Return false if player lost
 function moveSnake() {
-    // Check if movement is allowed
+    // Check if movement is allowed, i.e check if head is on border of grid and check if snake bites itself
     const head = snake[snake.length - 1]
     const newHead = snake[snake.length - 1] + direction
     if (head % 10 === 0 && direction === -1 ||  // Left
@@ -115,9 +114,11 @@ function moveSnake() {
     ) {
         return false
     } else {
+        // We can now assume that the next box is "safe"
         undrawSnake()
-        snake.push(snake[snake.length - 1] + direction)
-        if (boxes[newHead].classList.contains("apple")) {
+        snake.push(newHead)
+        if (checkForApple()) {
+            console.log("Apple touched")
             incrementScore()
             newApple()
             // snake.shift()
@@ -144,36 +145,39 @@ function undrawApple() {
     }
 }
 
+// Place new apple. Undraws old one and draws the new one.
 function newApple() {
     undrawApple()
-    let newApple
-    // New apple position must not be the same and should not touch the snake
-    do {
-        newApple = Math.floor(Math.random() * nrOfBoxes * nrOfBoxes)
-    } while (boxes[newApple].classList.contains("snake") || newApple === apple)
-
-    apple = newApple
+    apple = Math.floor(Math.random() * nrOfBoxes * nrOfBoxes)
     drawApple()
 }
 
+// Return true if apple touches any part of snake
 function checkForApple() {
-    const head = snake[snake.length - 1]
-    if ("apple" in boxes[head].classList) {
-
-    }
+    snake.forEach(snakePart => {
+        if (boxes[snakePart].classList.contains("apple")) {
+            return true
+        }
+    })
+    console.log("checkForApple fails")
+    return false
 }
 
 function incrementScore() {
     score++
     message.textContent = `Score: ${score}`
-
+    speed *= speedCoef
+    clearInterval(timerId)
+    timerId = setInterval(gameLoop, speed);
 }
 
+// Main game loop
 function gameLoop() {
+    // Move snake and if player lost...
     if (!moveSnake()) {
         message.textContent = `You lost! Score was ${score}`
         clearBoard()
         clearInterval(timerId)
+        // Player has to click button to start again
     }
-    // checkForApple()
 }
