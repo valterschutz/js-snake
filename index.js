@@ -18,11 +18,13 @@ let direction
 let score
 let timerId
 let speed
+let isPaused
 
 // Elements
 const grid = document.getElementById("grid")
 const message = document.getElementById("message")
 const startBtn = document.getElementById("start-btn")
+const pauseBtn = document.getElementById("pause-btn")
 
 // Set size of grid and populate with boxes
 grid.style.width = `${nrOfBoxes * boxSize}px`
@@ -62,11 +64,16 @@ document.addEventListener("keydown", function (e) {
     }
 })
 
-// Start game if button pressed
+// Start game if start button pressed
 startBtn.addEventListener("click", function () {
     initialize()
     clearInterval(timerId)
     timerId = setInterval(gameLoop, speed);
+})
+
+// Pause game if game is running, resume it if it was paused
+pauseBtn.addEventListener("click", function () {
+    isPaused = !isPaused
 })
 
 // Functions
@@ -78,6 +85,7 @@ function initialize() {
     snake = [11, 12, 13]
     direction = 1
     score = 0
+    isPaused = false
     // Speed in ms, smaller value means faster
     speed = startSpeed
     message.textContent = `Score: 0`
@@ -101,8 +109,12 @@ function undrawSnake() {
     snake.forEach(index => { boxes[index].classList.remove("snake") })
 }
 
-// Return false if player lost
+// Return false if player lost, otherwise true
 function moveSnake() {
+    // Don't move if game is paused
+    if (isPaused) {
+        return true
+    }
     // Check if movement is allowed, i.e check if head is on border of grid and check if snake bites itself
     const head = snake[snake.length - 1]
     const newHead = snake[snake.length - 1] + direction
@@ -118,7 +130,6 @@ function moveSnake() {
         undrawSnake()
         snake.push(newHead)
         if (checkForApple()) {
-            console.log("Apple touched")
             incrementScore()
             newApple()
             // snake.shift()
@@ -133,14 +144,13 @@ function moveSnake() {
 }
 
 function drawApple() {
-    if (apple) {
+    if (apple !== undefined) {
         boxes[apple].classList.add("apple")
     }
-
 }
 
 function undrawApple() {
-    if (apple) {
+    if (apple !== undefined) {
         boxes[apple].classList.remove("apple")
     }
 }
@@ -154,13 +164,13 @@ function newApple() {
 
 // Return true if apple touches any part of snake
 function checkForApple() {
+    let appleFound = false
     snake.forEach(snakePart => {
         if (boxes[snakePart].classList.contains("apple")) {
-            return true
+            appleFound = true
         }
     })
-    console.log("checkForApple fails")
-    return false
+    return appleFound
 }
 
 function incrementScore() {
